@@ -1,0 +1,30 @@
+name: Deploy to Linux Server
+
+on:
+  push:
+    branches:
+      - main  # Trigger only on merges to `main`
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH with PEM Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: Pull Latest Code on Server
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd /var/www/html/App && git pull origin master"
+
+          #      - name: Restart Service (Optional)
+          # run: |
+          #ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd /path/to/your/project && pm2 restart app"  # Change as per your service
+
