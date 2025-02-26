@@ -25,8 +25,8 @@ jobs:
 
       - name: Pull Latest Code on Server
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd /var/www/html/App && git pull origin master"
-
+          #ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd /var/www/html/App && git pull origin master"
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd /var/www/html/App && git pull origin master"
           #      - name: Restart Service (Optional)
           # run: |
           #ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd /path/to/your/project && pm2 restart app"  # Change as per your service
